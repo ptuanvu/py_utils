@@ -1,5 +1,6 @@
 import requests
 import json
+import re
 
 LOW = 50000000
 HIGH = 90000000
@@ -25,6 +26,12 @@ def findDetail( pId ):
     print "REQUEST DETAIL FAILED"
   return
 
+BASE_URL_XE = 'https://xe.chotot.com/huyen-binh-chanh/mua-ban-xe-may/'
+def generateLink( subject, list_id ):
+  subj = subject.encode('ascii', 'ignore')
+  subj1 = re.sub(r'[^\w]', ' ', subj);
+  return BASE_URL_XE + subj1.replace(' ', '-') + '-' + str(list_id) + '.htm'
+
 def findBike( url ):
   # print "FIND BIKE: " + url
   r = requests.get(url)
@@ -39,6 +46,7 @@ def findBike( url ):
         fo.write("<h4 class=\"card-title\">" + ads["subject"].encode('utf-8') + "</h4>")
         fo.write("<span class=\"card-text\">" + ads["price_string"].encode('utf-8') + "</span>")
         fo.write("<span class=\"card-text\">" + ads["date"].encode('utf-8') + "</span>")
+        fo.write("<span class=\"card-text\"><a href=\"" + generateLink(ads["subject"], ads["list_id"]) + "\">Link</a></span>")
         findDetail(ads["list_id"])
         fo.write("</div>")
         fo.write("</div>")
